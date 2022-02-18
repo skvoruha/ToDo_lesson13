@@ -49,6 +49,7 @@ const render = function () {
     li.querySelector('.todo-remove').addEventListener('click',function(event){
 
       // 4-13
+      // удаляем элемент при нажатиии корзины
       toDoData.forEach(function(item,index){
         console.log(item.text);
         if (event.path[2].textContent.trim() == item.text.trim()) {
@@ -67,6 +68,8 @@ todoControl.addEventListener('submit', function(event){
   event.preventDefault()
   // 3-13 чтобы пустые дела не добавлялись
   if (headerInput.value !== '') {
+    // Опцсташаем Localsorage для того чтобы заполнить новыми данныи из массива
+    localStorage.removeItem(toDoData)
     // создаём новый объект
     const newToDo = {
       text: headerInput.value,
@@ -74,12 +77,15 @@ todoControl.addEventListener('submit', function(event){
     }
     // добавляем объёет в массив
     toDoData.push(newToDo)
+
+    // сохраняе в локал в формате json stringify
+    localStorage.setItem(toDoData, JSON.stringify(toDoData));
+
     // очищаем value
     headerInput.value = ''
   } else {
     alert(" Вы хотитие добавить пустую задачу")
   }
-
 
   render()
 })
