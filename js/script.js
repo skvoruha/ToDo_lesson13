@@ -9,8 +9,19 @@ const todoCompleted = document.querySelector('.todo-completed')
 // переменная с кнопкой удаления
 const todoRemove = document.querySelector('.todo-remove')
 // создаём объект с
-const toDoData = []
+let toDoData = []
 
+// Записываем в newData преобразованная с JSON из localStorage с ключом toDoData занчения
+const newData = JSON.parse(localStorage.getItem('toDoData'));
+// передаём в сессионный массив значение с localStorage чтобы их показать
+
+// Если локалка пустая то просто записываем пустой массив
+if (newData == null) {
+  toDoData = []
+} else {
+
+  toDoData = newData
+}
 // функция render будет выводить массив toDoData
 const render = function () {
   // ЧТОБЫ СПИСКИ НЕ ВЫВОДИЛИ СОХРАНЕНЫЕ ДАННЫЕ
@@ -18,10 +29,9 @@ const render = function () {
   todoList.innerHTML = ''
   todoCompleted.innerHTML = ''
 
-  // перебор массива
   toDoData.forEach(function (item) {
-    // console.log(item);
-    const li = document.createElement('li')
+    if (item !== null) {
+      const li = document.createElement('li')
     li.classList.add('todo-item')
 
     li.innerHTML = ' <span class="text-todo">' + item.text + '</span>' +
@@ -37,11 +47,15 @@ const render = function () {
     } else {
       todoList.append(li)
     }
-      // записываем все li в список todoList с помощью append
+    // записываем все li в список todoList с помощью append
     // нахаодим конпку в li и вешаем на неё обработчик событий
     li.querySelector('.todo-complete').addEventListener('click', function(){
       // при нажати галочки нам нужно менять условие на противоположное
       item.completed = !item.completed
+      // Опусташаем Localsorage для того чтобы убрать удалённый элемент
+      localStorage.removeItem('toDoData')
+      //сохраняем новые данные в localStorage
+      localStorage.setItem('toDoData', JSON.stringify(toDoData));
       render()
     })
     // находим через li кноку удалтт через querySelector .todo-remove
@@ -51,14 +65,23 @@ const render = function () {
       // 4-13
       // удаляем элемент при нажатиии корзины
       toDoData.forEach(function(item,index){
-        console.log(item.text);
-        if (event.path[2].textContent.trim() == item.text.trim()) {
+        // Если item не пустой то выполнить
+        if (item !== null) {
+          // если название задачи совападет с название из списка то удаляем
+          if (event.path[2].textContent.trim() == item.text.trim()) {
           delete toDoData[index]
         }
-      })
+        }
 
+      })
+      // Опусташаем Localsorage для того чтобы убрать удалённый элемент
+      localStorage.removeItem('toDoData')
+      //сохраняем новые данные в localStorage
+      localStorage.setItem('toDoData', JSON.stringify(toDoData));
       render()
     })
+    }
+
 
   });
 }
@@ -68,8 +91,17 @@ todoControl.addEventListener('submit', function(event){
   event.preventDefault()
   // 3-13 чтобы пустые дела не добавлялись
   if (headerInput.value !== '') {
-    // Опцсташаем Localsorage для того чтобы заполнить новыми данныи из массива
-    localStorage.removeItem(toDoData)
+
+    // Если локалка пустая то просто записываем пустой массив
+    if (newData == null && toDoData.length == 0) {
+      console.log(toDoData);
+      toDoData = []
+    } else {
+      // переписываем все данные с локал в массив newToDo
+     toDoData = JSON.parse(localStorage.getItem('toDoData'));
+    }
+    // Опусташаем Localsorage для того чтобы заполнить новыми данныи из массива
+    localStorage.removeItem('toDoData')
     // создаём новый объект
     const newToDo = {
       text: headerInput.value,
@@ -78,8 +110,8 @@ todoControl.addEventListener('submit', function(event){
     // добавляем объёет в массив
     toDoData.push(newToDo)
 
-    // сохраняе в локал в формате json stringify
-    localStorage.setItem(toDoData, JSON.stringify(toDoData));
+    // сохраняе в локал в формате json  toDoData
+    localStorage.setItem('toDoData', JSON.stringify(toDoData));
 
     // очищаем value
     headerInput.value = ''
@@ -90,3 +122,4 @@ todoControl.addEventListener('submit', function(event){
   render()
 })
 
+render()
