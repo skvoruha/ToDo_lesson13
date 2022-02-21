@@ -30,7 +30,6 @@ const render = function () {
   todoCompleted.innerHTML = ''
 
   toDoData.forEach(function (item) {
-    if (item !== null) {
       const li = document.createElement('li')
     li.classList.add('todo-item')
 
@@ -65,14 +64,15 @@ const render = function () {
       // 4-13
       // удаляем элемент при нажатиии корзины
       toDoData.forEach(function(item,index){
-        // Если item не пустой то выполнить
-        if (item !== null) {
-          // если название задачи совападет с название из списка то удаляем
+            // если название задачи совападет с название из списка то удаляем
+            // if (event.path[2].textContent.trim() == item.text.trim()) {
+            // delete toDoData[index]
+            // }
           if (event.path[2].textContent.trim() == item.text.trim()) {
-          delete toDoData[index]
-        }
-        }
-
+              console.log(toDoData);
+              toDoData.splice(index,1)
+              console.log(toDoData);
+          }
       })
       // Опусташаем Localsorage для того чтобы убрать удалённый элемент
       localStorage.removeItem('toDoData')
@@ -80,7 +80,7 @@ const render = function () {
       localStorage.setItem('toDoData', JSON.stringify(toDoData));
       render()
     })
-    }
+
 
 
   });
